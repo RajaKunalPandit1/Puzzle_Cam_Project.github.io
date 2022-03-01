@@ -1,0 +1,64 @@
+body{
+    margin: 0em;
+    font-family: 'Zen Kurenaido', sans-serif;   
+    background-color: #013a63;
+    overflow: hidden;
+}
+
+.menu{
+    width: 80vmin;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    background: rgba(97, 165, 194,0.6);
+    text-align: center;
+    padding: 5vmin;
+    border: 1vmin rgba(0, 0, 0, 0.6) solid;
+    font-size: 7vmin;
+}
+
+button{
+
+    background: none;
+    color: var(--contbtnColor);
+    border: 2px solid;
+    padding-left: 1em;
+    padding-right: 1em;
+    font-size: 1em;
+    transition: color 0.25s,boder-color 0.25s,box-shadow 0.25s,transform 0.25s;
+
+}
+
+button:hover{
+    border-color: #f1ff5c;
+    color: white;
+    box-shadow: 0 0.5em 0.5em -0.4em #f1ff5c;
+    transform: translateY(-0.25em);
+    cursor: pointer;
+}
+
+select{
+    font-size: 7vmin;
+    cursor: pointer;
+    border:none;
+    border-radius: 1vmin;
+    outline: none;
+}
+
+#time{
+    background-color: tomato;
+    position: absolute;
+    color: white;
+    border-radius: 5%;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+#scoresContainer{
+    height: 43vh;
+    overflow: auto;
+}
+
+
