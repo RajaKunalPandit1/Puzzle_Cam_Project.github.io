@@ -6,6 +6,6 @@ Hi there, This is my Puzzle_Cam Project, which is basically a Puzzle Game which 
 
 • It is Responsive.
 
-• Exlored about Image Manipulation, Working with Sound, Advanced Cropping and Interface Design.
+• Explored about Image Manipulation, Working with Sound, Advanced Cropping and Interface Design.
 
 • Let's Solve the Puzzle @ https://rajakunalpandit1.github.io/Puzzle_Cam_Project.github.io/
