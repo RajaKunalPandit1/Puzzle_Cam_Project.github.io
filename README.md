@@ -7,7 +7,6 @@ Hi there, This is my Puzzle_Cam Project, which is basically a Puzzle Game which 
 • It is Responsive.
 
 • Explored about Image Manipulation, Working with Sound, Advanced Cropping and Interface Design.
-![image](https://github.com/RajaKunalPandit1/Puzzle_Cam_Project.github.io/assets/76692648/fc196f58-04ca-4ec3-9f04-296e38e6c2e7)
 <p>
     <img src="https://github.com/RajaKunalPandit1/Puzzle_Cam_Project.github.io/assets/76692648/fc196f58-04ca-4ec3-9f04-296e38e6c2e7" alt><br/>
     <em>Fig.1</em>
