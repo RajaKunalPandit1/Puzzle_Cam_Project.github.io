@@ -294,7 +294,16 @@ function getPressedPiece(loc){
     return null;
 }
 
+// finds a puzzle piece with a specific color within the PIECES array
+/*
+    used to identify and manipulate pieces based on their color, which can be 
+    helpful in various puzzle-solving or game scenarios where different pieces may 
+    have different properties or behaviors based on their colors.
+*/
+
 function getPressedPieceByColor(loc,color){
+    // starts by iterating backward through the PIECES array using a for loop, starting from the last piece (topmost piece in the rendering order) 
+    // and moving towards the first piece.
     for(let i=PIECES.length-1;i>=0;i--){
         if(PIECES[i].color == color){
             return PIECES[i];
@@ -303,37 +312,68 @@ function getPressedPieceByColor(loc,color){
     return null;
 }
 
+//  responsible for adjusting the size and position of the canvas and puzzle pieces when the window is resized. 
 function handleResize(){
 
+    /*
+         setting the CANVAS element's width and height to match the current dimensions of the window 
+         using the window.innerWidth and window.innerHeight properties. This ensures that the canvas 
+         always covers the entire visible area of the browser window.
+    */
+    
     CANVAS.width = window.innerWidth;
     CANVAS.height = window.innerHeight;
 
+    /*
+        calculates a resizer value that is used to scale the puzzle's size while maintaining its aspect ratio. 
+    */
+
+    /*
+        resizer is the product of SCALER (a constant scaling factor defined earlier in the code) and the minimum 
+        scaling factor between the canvas's width divided by the video's width and the canvas's height divided by 
+        the video's height. This ensures that the puzzle and video fit within the canvas while maintaining their 
+        original aspect ratios.
+    */
+    
     let resizer = SCALER*
                 Math.min(
                     window.innerWidth/VIDEO.videoWidth,
                     window.innerHeight/VIDEO.videoHeight
                 );
+
+    // SIZE.width and SIZE.height are set to the scaled dimensions of the video, 
+    //ensuring that the puzzle pieces are appropriately sized based on the window dimensions.    
             SIZE.width = resizer*VIDEO.videoWidth;
             SIZE.height = resizer*VIDEO.videoHeight;
+    // SIZE.x and SIZE.y are adjusted to center the puzzle within the canvas by calculating 
+    //the center position based on the scaled dimensions and the canvas dimensions.
             SIZE.x = window.innerWidth/2-SIZE.width/2;
             SIZE.y = window.innerHeight/2-SIZE.height/2;
 }
 
+// core of the puzzle game and is responsible for rendering the game elements and updating the game state. 
 function updateGame(){
-
+// clearing the entire canvas using the CONTEXT.clearRect method. This ensures that the previous frame's content is removed, preventing visual artifacts.
     CONTEXT.clearRect(0,0,CANVAS.width,CANVAS.height);
+    // It sets the global alpha of the canvas context to 0.5 temporarily using CONTEXT.globalAlpha. 
+    // This creates a semi-transparent effect, making the video feed appear faded in the background.
     CONTEXT.globalAlpha = 0.5;
+    // It draws the video feed (VIDEO) onto the canvas using CONTEXT.drawImage. 
+    // The video is drawn at the position specified by SIZE.x and SIZE.y, and its dimensions are set to SIZE.width and SIZE.height. 
+    //This ensures that the video is displayed within the puzzle area on the canvas.
     CONTEXT.drawImage(VIDEO,
         SIZE.x, SIZE.y,
         SIZE.width, SIZE.height);
+    // It restores the canvas context's global alpha to 1, effectively making subsequent drawings fully opaque.
     CONTEXT.globalAlpha = 1;
-
+    // It iterates through all puzzle pieces in the PIECES array and calls the draw method of each piece, 
+    //passing the canvas context CONTEXT as an argument. This draws each puzzle piece onto the canvas
 
         for(let i=0;i<PIECES.length;i++){
             PIECES[i].draw(CONTEXT);
         }
-        updateTime();
-    window.requestAnimationFrame(updateGame);
+        updateTime(); // updates the displayed time on the screen.
+    window.requestAnimationFrame(updateGame); // it schedules the next frame to be rendered 
 }
 
 function getRandomColor(){
@@ -344,16 +384,23 @@ function getRandomColor(){
     return "rgb("+red+","+green+","+blue+")"
 }
 
+// responsible for setting up the puzzle pieces in your puzzle game
 function initializePieces(rows,cols){
-
+// It takes two parameters, rows and cols, which define the number of rows and columns for the puzzle grid.
     SIZE.rows = rows;
     SIZE.columns = cols; 
 
     PIECES = [];
     const uniqueRandomColors = [];
-
+    
+    // It uses nested loops to iterate through the rows and columns of the puzzle grid, creating a puzzle piece for each cell.
     for(let i=0;i<SIZE.rows;i++){
         for(let j=0;j<SIZE.columns;j++){
+
+            // For each puzzle piece, it generates a random color using the getRandomColor function and assigns 
+            //it to the color property of the piece. It ensures that each color used is unique by checking if it's 
+            //already in the uniqueRandomColors array. If the color is not unique, it generates a new random color until a unique one is found.
+
             let color = getRandomColor();
 
             while(uniqueRandomColors.includes(color)){
@@ -363,6 +410,10 @@ function initializePieces(rows,cols){
         }
     }
 
+    // It calculates and sets the top, bottom, left, and right properties of each puzzle piece. 
+    //These properties determine how much each piece can move in different directions within the puzzle grid. 
+    //The specific values for these properties are randomized to create a shuffled puzzle.
+    
     let cnt =0;
     for(let i=0;i<SIZE.rows;i++){
         for(let j=0;j<SIZE.columns;j++){
@@ -394,7 +445,7 @@ function initializePieces(rows,cols){
                 piece.top = -PIECES[cnt-SIZE.columns].bottom;
             }
 
-            cnt++;
+            cnt++; // It increments the cnt variable to keep track of the number of puzzle pieces created.
         }
     }
 
@@ -412,21 +463,45 @@ function randomizePieces(){
     }
 }
 
-class Piece{
+class Piece{ // The Piece class represents individual puzzle pieces in your puzzle game.
     constructor(rowIndex,colIndex,color){
-        this.rowIndex = rowIndex;
+
+        // The constructor takes three parameters: rowIndex, colIndex, and color. These parameters are used to initialize the properties of each puzzle piece.
+        // rowIndex and colIndex represent the position of the piece within the puzzle grid.
+        // color represents the color of the puzzle piece.
+        
+        this.rowIndex = rowIndex; // rowIndex and colIndex store the piece's position in the grid.
         this.colIndex = colIndex;
-        this.x = SIZE.x+SIZE.width*this.colIndex/SIZE.columns;
+        this.x = SIZE.x+SIZE.width*this.colIndex/SIZE.columns; // x and y store the current position of the piece on the canvas.
         this.y = SIZE.y+SIZE.height*this.rowIndex/SIZE.rows;
-        this.width = SIZE.width/SIZE.columns;
+        this.width = SIZE.width/SIZE.columns; // width and height store the dimensions of the piece.
         this.height = SIZE.height/SIZE.rows;
+        // xCorrect and yCorrect store the correct position of the piece (used for checking if it's in the correct position).
         this.xCorrect = this.x;
         this.yCorrect = this.y;
-        this.correct =  true;
+        this.correct =  true; // correct is a boolean flag indicating whether the piece is in the correct position.
         this.color = color;
     }
 
-    draw(context, useCam = true){
+    draw(context, useCam = true){  // responsible for rendering the puzzle piece on the canvas.
+
+    /*
+    It uses canvas drawing operations to create the appearance of the piece, including its shape and color.
+    The useCam parameter determines whether to use the video feed (camera) as the background of the piece or fill it with a solid color 
+    based on the piece's color property.
+    
+    The method first defines various constants related to the piece's appearance, such as sz, neck, tabWidth, and tabHeight.
+    
+    It then uses canvas drawing operations (e.g., moveTo, lineTo, bezierCurveTo, etc.) to draw the piece's shape based on its top, right, bottom, 
+    and left properties.
+    
+    Depending on the useCam parameter, it either fills the piece with the camera feed or a solid color.
+    
+    The clip method is used to ensure that the piece's content doesn't extend beyond its boundaries.
+    
+    Finally, the method restores the canvas state and strokes the piece's outline.
+    */    
+        
         context.beginPath();
         
             
@@ -566,6 +641,13 @@ class Piece{
         context.stroke();
     }
     isClose(){
+        /*
+            The isClose method checks whether the piece is close to its correct position. 
+            It calculates the distance between the current position (x and y) and the correct position 
+            (xCorrect and yCorrect) and checks if it's less than one-third of the piece's width. If so, 
+            it returns true, indicating that the piece is close to its correct position; otherwise, it returns false.
+        */
+        
         if(distance({x:this.x,y:this.y},
             {x:this.xCorrect,y:this.yCorrect})<this.width/3){
                 return true;
@@ -573,6 +655,15 @@ class Piece{
             return false;
     }
     snap(){
+        /*
+            The snap method is called when a piece is correctly placed in its position.
+            
+            It updates the x and y properties to match the correct position (xCorrect and yCorrect).
+            
+            It sets the correct flag to true to indicate that the piece is in the correct position.
+            
+            It plays a "pop" sound using the POP_SOUND audio object, providing audio feedback to the player.
+        */
         this.x = this.xCorrect;
         this.y = this.yCorrect;
         this.correct = true;
@@ -580,7 +671,7 @@ class Piece{
     }
 }
 
-function distance(p1,p2){
+function distance(p1,p2){ // Calculates the Euclidean distance between two points p1 and p2 in a 2D space.
     return Math.sqrt(
         (p1.x - p2.x) * (p1.x - p2.x) + 
         (p1.y - p2.y) * (p1.y - p2.y));
@@ -588,6 +679,12 @@ function distance(p1,p2){
 
 
 function playNote(key,duration){
+    /*
+        Plays a musical note of a specified frequency (key) for a given duration (duration) using the Web Audio API.
+        It creates an oscillator, sets its frequency, and schedules its start and stop times.
+        Envelopes are used to control the volume and create a simple sound effect.
+    */
+    
     let osc = AUDIO_CONTEXT.createOscillator();
     osc.frequency.value = key;
     osc.start(AUDIO_CONTEXT.currentTime);
@@ -606,7 +703,8 @@ function playNote(key,duration){
     }, duration);
 }
 
-function playMelody(){
+function playMelody(){ // Plays a melody by calling playNote function with different frequencies and durations.
+                      // It plays notes sequentially to create a melody effect.
     playNote(keys.MI,300);
     setTimeout(function(){
         playNote(keys.DO,300);
@@ -619,7 +717,11 @@ function playMelody(){
     }, 600);
 }
 
-
+/*
+    Displays an end screen when the puzzle is completed.
+    It calculates the player's score (time taken to complete the puzzle) and displays it.
+    The end screen becomes visible to the player.
+*/
 function showEndScreen(){
     const time = Math.floor((END_TIME-START_TIME)/1000);
     document.getElementById("scoreValue").innerHTML="Score: "+time;
@@ -627,18 +729,25 @@ function showEndScreen(){
 }
 
 function showMenu(){
+    // Hides the end screen and displays the game menu.
+// Allows the player to restart the game or choose different difficulty levels.
     document.getElementById("endScreen").style.display = "none";
     document.getElementById("menuItems").style.display = "block";
 }
 
 function showScores(){
+    // Hides the end screen and displays the scores screen.
+    // This function seems to be intended to fetch and display high scores for different difficulty levels,
+    // but it currently displays "Loading..." and doesn't fetch scores.
+    
     document.getElementById("endScreen").style.display = "none";
     document.getElementById("scoresScreen").style.display = "block";
     document.getElementById("scoresContainer").innerHTML="Loading...";
     getScores();
 }
 
-function closeScores(){
+function closeScores(){ // Closes the scores screen and returns to the end screen.
+
     document.getElementById("endScreen").style.display="block";
     document.getElementById("scoresScreen").style.display="none";
 }
@@ -651,6 +760,10 @@ function getScores(){
     });
 }
 
+// Formats the retrieved scores data into an HTML table.
+// This function appears to be intended for formatting and displaying 
+// high scores but is not fully implemented in the provided code.
+
 function formatScores(data){
     let html = "<table style='width:100%;text-align:center;'>";
     html += formatScoreTable(data["easy"],"Easy");
@@ -661,6 +774,8 @@ function formatScores(data){
     return html;
 }
 
+// Formats a specific score table with a given header (difficulty level).
+// Constructs an HTML table row for each high score entry, including the player's name and time taken to complete the puzzle.
 
 function formatScoreTable(data,header){
    let html = "<tr style = 'background:rgb(123,146,196);color:white'>";
